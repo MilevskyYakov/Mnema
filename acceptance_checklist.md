@@ -181,8 +181,10 @@
 - [x] App запускает backend sidecar на локальном порту
 - [x] App bootstrap отдаёт API base URL, app data dir, output dir, cache dir и media tools status
 - [x] Можно выбрать модель по умолчанию через app settings
-- [x] Локальный `npm run tauri:build` собирает `.app`
+- [x] Локальный `npm run tauri:build` собирает macOS `.app` при подготовленных runtime resources (исторический build evidence, не новый native smoke)
 - [ ] Bundle smoke подтверждён на чистой машине
+
+Текущие [platform packaging prerequisites/outputs](README.md#сборка-desktop-app) и [app-first gates](docs/test-plan.md) проверяются на конкретной версии отдельно для macOS и Windows. Этот build checkbox не закрывает [Windows QA #84](https://github.com/MilevskyYakov/Mnema/issues/84) или [эпик #78](https://github.com/MilevskyYakov/Mnema/issues/78).
 
 ## R. Mnema release candidate 0.1.1 (2026-08-12)
 
