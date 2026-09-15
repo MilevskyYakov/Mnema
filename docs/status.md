@@ -1,5 +1,7 @@
 # Status
 
+Исторический журнал стадий и evidence, не текущая очередь исполнения или readiness новой версии. Актуальные stack/build/run — в [README](../README.md#сборка-desktop-app), gates — в [test plan](test-plan.md), release/Windows QA — в [#78](https://github.com/MilevskyYakov/Mnema/issues/78) / [#84](https://github.com/MilevskyYakov/Mnema/issues/84). Старые `Next`, `Current Blockers` и PASS ниже относятся к указанным датам и не переносятся на новую сборку.
+
 ## Snapshot
 - Current phase: App-first hardening and refactor
 - Plan file: `docs/plans.md`

@@ -1,26 +1,26 @@
 # Plans
 
+Исторический milestone-план: стадии и предположения ниже относятся к первоначальной разработке, не к текущему stack/build/readiness. Для текущей задачи используйте [AGENTS](../AGENTS.md), [README build/run](../README.md#сборка-desktop-app) и [test plan](test-plan.md); release/QA очередь ведётся в [#78](https://github.com/MilevskyYakov/Mnema/issues/78). Полезные требования и stop-and-fix критерии ниже сохраняются, старые этапы не запускаются автоматически.
+
 ## Source
 - Task: построить план разработки локального macOS mini-service для транскрибации аудио/видео с diarization
 - Canonical input: `task.md`, `README.md`, `decisions.md`, `acceptance_checklist.md`
-- Repo context: стартовый репозиторий требований без исходного кода
+- Текущий repo context и stack: [README](../README.md#app-и-frontend).
 - Last updated: 2026-04-18
 
 ## Execution Analysis
 - Требования уже хорошо зафиксированы на продуктном уровне, поэтому главный риск не в нехватке требований, а в неправильной очередности реализации и выборе хрупкого speech-стека.
 - План разбит по зависимостям: сначала каркас проекта, единая модель данных и конфиг; затем single-file pipeline как минимальный сквозной путь; после этого экспорты и деградации; затем batch/watch/service; в финале стабилизация, документация и приёмка.
-- Так как кодовой базы и команд проверки ещё нет, первые milestone одновременно создают репозиторный каркас, pyproject, конфиги, sample data и базовую test harness.
 
 ## Assumptions
 - Целевая реализация будет на Python 3.11+ под macOS Apple Silicon.
-- Репозиторий пока не является git-репозиторием; это не блокирует планирование, но стоит исправить до начала активной разработки.
 - MVP сначала оптимизируется под локальный sequential execution с `max_parallel_jobs=1`.
 - Диаризация и alignment проектируются как опциональные слои с fallback, если локальный backend окажется нестабилен или потребует внешний токен.
 - Summary в MVP допустимо реализовать через локальный extractive pipeline или локальный LLM-адаптер с отключаемым режимом.
-- Frontend начинается как локальный web dashboard поверх mini-service API и проектируется так, чтобы позже его можно было упаковать в desktop app через Tauri/Electron.
+- Canonical user surface — packaged Tauri app с local backend; browser dashboard остаётся dev/debug интерфейсом.
 
 ## Validation Assumptions
-- После появления Python-проекта валидация будет опираться на `pytest`, `ruff`, `mypy` и smoke-команды CLI.
+- Текущая валидация опирается на project-native Python/frontend/native gates и packaged app-first smoke из [test plan](test-plan.md).
 - Для тяжёлых E2E-проверок понадобится отдельный набор sample media короткой длительности и lightweight preset.
 - Проверки качества PDF/DOCX будут частично структурными, а не только побайтными.
 
@@ -274,11 +274,11 @@ npm run e2e
 python -m pytest
 python -m ruff check src tests
 python -m mypy src
-python -m mnema.cli.main run sample_data/dialogue.mp3 --out ./output
-python -m mnema.cli.main serve --host 127.0.0.1 --port 8765
-cd frontend && npm run build
-cd frontend && npm run tauri:build
+cd frontend
+npm run build
 ```
+
+Текущая desktop validation: [platform packaging prerequisites и outputs](../README.md#сборка-desktop-app), затем [packaged app-first smoke](test-plan.md#end-to-end--smoke). Прямой `tauri:build` без подготовленного runtime не заменяет этот путь. Supporting CLI/API smoke с существующими fixtures и ограничениями side effects — в [command matrix](test-plan.md#command-matrix).
 
 ### Known Risks
 - Без минимального набора sample fixtures тесты будут слишком тяжёлыми и нестабильными.

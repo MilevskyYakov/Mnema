@@ -1,5 +1,7 @@
 # Frontend Plan
 
+This is the initial frontend-slice plan, not current build instructions or release readiness. Current app flow and stack are described in [README](../README.md#app-и-frontend); use its [platform packaging instructions](../README.md#сборка-desktop-app) and the [test plan](test-plan.md) for validation. Initial-slice exclusions and milestone order below are historical, not a reason to remove shipped batch/updater behavior or reintroduce participant hints.
+
 ## Goal
 
 Frontend is the UI layer for the canonical Tauri desktop app. It gives the user a simple working surface for creating jobs, tracking progress, reading transcripts, checking diagnostics, and downloading artifacts.

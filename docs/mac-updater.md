@@ -32,6 +32,8 @@ Then copy only the generated public key into `frontend/src-tauri/tauri.conf.json
 
 ## Local/staging signed build
 
+Prepare the platform toolchain/runtime prerequisites from [README](../README.md#сборка-desktop-app) first. Packaging builds artifacts; it does not install or publish them. Signing, local installation, native smoke, and public rollout require their own authorized scope. Do not run these commands for a docs-only check.
+
 ```bash
 cd frontend
 export TAURI_SIGNING_PRIVATE_KEY="$HOME/.tauri/mnema-updater.key"
@@ -51,12 +53,14 @@ On native Windows 11 x64, use the same signing environment:
 $env:TAURI_SIGNING_PRIVATE_KEY="$HOME\.tauri\transcribe-doc-updater.key"
 $env:TAURI_SIGNING_PRIVATE_KEY_PASSWORD="..."
 cd frontend
-npm run package:windows -- -Smoke
+npm run package:windows
 ```
 
 The Windows build creates one NSIS installer and updater signature under
 `frontend/src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/`.
 Do not add MSI unless NSIS fails a measured requirement.
+
+Optional `npm run package:windows -- -Smoke` installs, launches, reinstalls and uninstalls the app, downloads a model, and writes app data/fixtures. Use only an authorized disposable Windows environment without an existing Mnema installation or user data. The script checks app-owned backend/API and selected files; it does not exercise the full UI, updater card, or model readiness after upgrade. Without `-PreviousInstallerUrl` it reinstalls the same version. [Windows QA #84](https://github.com/MilevskyYakov/Mnema/issues/84) owns the full Windows 11 x64 device checklist; CI/build success does not close it.
 
 Production Windows artifacts are built only by the protected manual workflow
 on `main`; its `production` environment owns the signing secrets:
@@ -69,7 +73,7 @@ Create the GitHub Release first. Keep a new release as draft until macOS and
 Windows artifacts plus `latest.json` are attached and checked.
 When `previous_tag` is set, the native smoke installs that public release,
 creates a job/model/settings, upgrades with the new signed installer, and
-checks that all app data survives before uninstall verification.
+checks backend startup and job/settings/Markdown file presence before uninstall verification. Full model/UI/data readiness still requires the manual app-first checks below.
 
 ## `latest.json` shape for GitHub Releases
 
@@ -114,7 +118,7 @@ marking the release successful.
 
 Run the sequence once on macOS arm64 and once on Windows 11 x64.
 
-1. Build and install version A with the platform package command.
+1. Build version A with the platform package command, then explicitly install that exact artifact: the macOS bundle or Windows NSIS installer. Record commit/version, OS/architecture, artifact path/hash; packaging alone does not install. A macOS local build with a temporary updater key does not verify production-feed trust.
 2. Download at least one ASR model and confirm `/models` or the UI shows it as `ready`.
 3. Save settings and create or keep one user output/history item.
 4. Only after install smoke passes, bump version B in `frontend/src-tauri/tauri.conf.json`, `frontend/src-tauri/Cargo.toml`, and `frontend/package.json`.
